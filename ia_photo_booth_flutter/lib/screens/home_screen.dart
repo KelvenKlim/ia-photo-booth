@@ -23,6 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final _instructionsController = TextEditingController();
   final _emailFocusNode = FocusNode();
 
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(() => setState(() {}));
+  }
+
   String _selectedTheme = models.kThemes.first.value;
   String _selectedSize = models.kSizes.first.value;
   File? _imageFile;
@@ -32,7 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _promptUsed;
 
   bool get _canProcess =>
-      _imageFile != null && _appState != models.AppState.processing;
+      _imageFile != null &&
+      _emailController.text.contains('@') &&
+      _appState != models.AppState.processing;
 
   bool get _isProcessing => _appState == models.AppState.processing;
 

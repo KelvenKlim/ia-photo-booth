@@ -71,7 +71,7 @@ class ConfigFormCard extends StatelessWidget {
 
             // Email
             Text(
-              'E-mail (opcional)',
+              'E-mail',
               style: TextStyle(
                 color: Colors.white.withAlpha(204),
                 fontSize: 13,
