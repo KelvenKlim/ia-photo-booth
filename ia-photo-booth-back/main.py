@@ -192,3 +192,36 @@ async def edit_image(
             os.remove(tmp_path)
         except OSError:
             pass
+
+from email.message import EmailMessage
+import smtplib
+
+# Endpoint para envio de imagem por e-mail
+@app.post("/api/send-email")
+async def send_email(
+    to_email: str = Form(...),
+    image_base64: str = Form(...),
+):
+    print("Recebido pedido de envio de e-mail para:", to_email)
+    msg = EmailMessage()
+    msg['Subject'] = 'Sua foto já está pronta! 📸'
+    msg['From'] = os.getenv('SMTP_FROM', 'seuemail@dominio.com')
+    msg['To'] = to_email
+    msg.set_content(
+        'Olá!\n\n'
+        'Sua foto gerada por IA já está pronta.\n'
+        'Ela está anexada neste e-mail para você baixar e compartilhar como quiser.\n\n'
+        'Esperamos que tenha gostado da experiência!'
+    )
+
+    img_data = base64.b64decode(image_base64)
+    msg.add_attachment(img_data, maintype='image', subtype='png', filename='foto.png')
+
+    try:
+        with smtplib.SMTP_SSL(os.getenv('SMTP_SERVER', 'smtp.seuprovedor.com'), int(os.getenv('SMTP_PORT', '465'))) as smtp:
+            smtp.login(os.getenv('SMTP_FROM', 'seuemail@dominio.com'), os.getenv('SMTP_PASS', 'SENHA'))
+            smtp.send_message(msg)
+        return JSONResponse({"success": True})
+    except Exception as e:
+        logger.error(f"Erro ao enviar e-mail: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao enviar e-mail: {e}")

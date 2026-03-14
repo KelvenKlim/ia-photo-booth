@@ -119,7 +119,7 @@ export default function Index() {
                 promptUsed={promptUsed}
               />
               <div className="mt-5">
-                <ShareButtons resultUri={resultUri} onRegenerate={handleProcess} />
+                <ShareButtons resultUri={resultUri} onRegenerate={handleProcess} email={email} />
               </div>
             </>
           )}

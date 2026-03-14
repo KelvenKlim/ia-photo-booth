@@ -53,7 +53,7 @@ export function ConfigFormCard(props: ConfigFormCardProps) {
         {/* Email */}
         <div>
           <label className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            <Mail className="h-3.5 w-3.5" /> E-mail <span className="text-muted-foreground/60 normal-case">(opcional)</span>
+            <Mail className="h-3.5 w-3.5" /> E-mail <span className="text-muted-foreground/60 normal-case"></span>
           </label>
           <input
             type="email"

@@ -1,12 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Share2, Download, Mail, RefreshCw } from "lucide-react";
+import { useState } from "react";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 interface ShareButtonsProps {
   resultUri: string;
   onRegenerate: () => void;
+  email?: string;
 }
 
-export function ShareButtons({ resultUri, onRegenerate }: ShareButtonsProps) {
+export function ShareButtons({ resultUri, onRegenerate, email }: ShareButtonsProps) {
+  const [sending, setSending] = useState(false);
+
   const handleShare = async () => {
     try {
       // Check if Web Share API is available
@@ -86,6 +92,33 @@ export function ShareButtons({ resultUri, onRegenerate }: ShareButtonsProps) {
     }
   };
 
+  const handleEmail = async () => {
+    if (!email || !email.includes("@")) {
+      alert("Digite um e-mail válido no campo acima.");
+      return;
+    }
+    setSending(true);
+    try {
+      const base64 = resultUri.split(",")[1];
+      const form = new FormData();
+      form.append("to_email", email);
+      form.append("image_base64", base64);
+      const res = await fetch(`${API_URL}/api/send-email`, {
+        method: "POST",
+        body: form,
+      });
+      if (res.ok) {
+        alert("E-mail enviado com sucesso!");
+      } else {
+        alert("Erro ao enviar e-mail.");
+      }
+    } catch (e) {
+      alert("Erro ao enviar e-mail.");
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <section className="space-y-3 animate-fade-up" style={{ animationDelay: "0.15s" }}>
       <Button variant="whatsapp" size="xl" className="w-full" onClick={handleShare}>
@@ -98,9 +131,9 @@ export function ShareButtons({ resultUri, onRegenerate }: ShareButtonsProps) {
         Baixar Imagem
       </Button>
 
-      <Button variant="outline-card" size="lg" className="w-full opacity-50 cursor-not-allowed" disabled>
+      <Button variant="outline-card" size="lg" className="w-full" onClick={handleEmail} disabled={sending}>
         <Mail className="h-4 w-4" />
-        Enviar por E-mail — Em breve
+        {sending ? "Enviando..." : "Enviar por E-mail"}
       </Button>
 
       <Button variant="ghost" size="default" className="w-full text-primary" onClick={onRegenerate}>
