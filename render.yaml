@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ia-photo-booth-back
+    runtime: python
+    rootDir: ia-photo-booth-back
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: SENDGRID_FROM
+        value: noreply@icbeutechzone.com
+      - key: MOCK_MODE
+        value: false
