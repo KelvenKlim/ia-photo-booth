@@ -1,0 +1,62 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+bun.lockb
+
+# Environment variables & API Keys (IMPORTANTE!)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.*.production
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+ENV/
+env/
+
+# Backend
+ia-photo-booth-back/.venv/
+ia-photo-booth-back/__pycache__/
+ia-photo-booth-back/*.pyc
+
+# Frontend
+ia-photo-booth-front/dist/
+ia-photo-booth-front/node_modules/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing
+.coverage
+.pytest_cache/
+
+# Temporary
+.cache/
+*.tmp

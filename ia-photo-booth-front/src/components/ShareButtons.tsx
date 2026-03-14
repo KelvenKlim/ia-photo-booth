@@ -1,0 +1,112 @@
+import { Button } from "@/components/ui/button";
+import { Share2, Download, Mail, RefreshCw } from "lucide-react";
+
+interface ShareButtonsProps {
+  resultUri: string;
+  onRegenerate: () => void;
+}
+
+export function ShareButtons({ resultUri, onRegenerate }: ShareButtonsProps) {
+  const handleShare = async () => {
+    try {
+      // Check if Web Share API is available
+      if (!navigator.share) {
+        alert("Compartilhamento não suportado neste navegador. Use o botão de baixar para salvar a imagem.");
+        return;
+      }
+
+      // Convert data URI to blob
+      const res = await fetch(resultUri);
+      const blob = await res.blob();
+      
+      // Try to share as file (works on Android Chrome, some iOS apps)
+      const file = new File([blob], "icbeu-ia-photo.png", { type: "image/png" });
+      
+      try {
+        // Check if device supports file sharing
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "ICBEU IA Photo Zone",
+            text: "Veja minha foto transformada com IA no ICBEU!",
+            files: [file],
+          });
+          return;
+        }
+      } catch (fileShareError) {
+        console.log('File sharing not fully supported, trying alternative...');
+      }
+
+      // Fallback: Create a blob URL and open share with that
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'icbeu-ia-photo.png';
+      
+      // Try share with blob URL
+      try {
+        await navigator.share({
+          title: "ICBEU IA Photo Zone",
+          text: "Veja minha foto transformada com IA no ICBEU!",
+          url: blobUrl,
+        });
+        URL.revokeObjectURL(blobUrl);
+        return;
+      } catch {
+        URL.revokeObjectURL(blobUrl);
+      }
+
+      // Last fallback: just trigger download and inform user
+      alert("Compartilhamento direto não está disponível. A imagem será baixada. Você pode compartilhá-la manualmente após o download.");
+      link.click();
+      
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        // User cancelled - silent
+        return;
+      }
+      console.error('Share error:', error);
+      alert("Erro ao compartilhar. Tente baixar a imagem em vez disso.");
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      const res = await fetch(resultUri);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "icbeu-ia-photo.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Erro ao baixar a imagem.");
+    }
+  };
+
+  return (
+    <section className="space-y-3 animate-fade-up" style={{ animationDelay: "0.15s" }}>
+      <Button variant="whatsapp" size="xl" className="w-full" onClick={handleShare}>
+        <Share2 className="h-5 w-5" />
+        Compartilhar
+      </Button>
+
+      <Button variant="outline-card" size="lg" className="w-full" onClick={handleDownload}>
+        <Download className="h-4 w-4" />
+        Baixar Imagem
+      </Button>
+
+      <Button variant="outline-card" size="lg" className="w-full opacity-50 cursor-not-allowed" disabled>
+        <Mail className="h-4 w-4" />
+        Enviar por E-mail — Em breve
+      </Button>
+
+      <Button variant="ghost" size="default" className="w-full text-primary" onClick={onRegenerate}>
+        <RefreshCw className="h-4 w-4" />
+        Gerar novamente
+      </Button>
+    </section>
+  );
+}
