@@ -42,6 +42,31 @@ function SelectField({
 }
 
 export function ConfigFormCard(props: ConfigFormCardProps) {
+  // Gerar sugestões de domínios baseadas no que o usuário digitou
+  const emailSuggestions = (() => {
+    const val = props.email;
+    const atIndex = val.indexOf("@");
+    if (atIndex < 1) return []; // sem @ ou nada antes do @
+    const username = val.substring(0, atIndex);
+    const typedDomain = val.substring(atIndex + 1).toLowerCase();
+    const domains = [
+      "gmail.com",
+      "hotmail.com",
+      "outlook.com",
+      "yahoo.com",
+      "yahoo.com.br",
+      "live.com",
+      "icloud.com",
+      "uol.com.br",
+      "bol.com.br",
+      "terra.com.br",
+      "protonmail.com",
+    ];
+    return domains
+      .filter((d) => d.startsWith(typedDomain))
+      .map((d) => `${username}@${d}`);
+  })();
+
   return (
     <section className="card-glass p-5">
       <div className="mb-4 flex items-center gap-2">
@@ -57,11 +82,19 @@ export function ConfigFormCard(props: ConfigFormCardProps) {
           </label>
           <input
             type="email"
+            list="email-suggestions"
+            autoComplete="email"
+            inputMode="email"
             value={props.email}
             onChange={(e) => props.onEmailChange(e.target.value)}
             placeholder="seu@email.com"
             className="w-full rounded-md border border-border bg-icbeu-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-shadow"
           />
+          <datalist id="email-suggestions">
+            {emailSuggestions.map((s) => (
+              <option key={s} value={s} />
+            ))}
+          </datalist>
         </div>
 
         {/* Theme */}
