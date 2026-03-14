@@ -94,6 +94,16 @@ export function ShareButtons({ resultUri, onRegenerate, email }: ShareButtonsPro
 
   const handleEmail = async () => {
     if (!email || !email.includes("@")) {
+      // Scroll até o campo de e-mail e dar foco
+      const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+      if (emailInput) {
+        emailInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          emailInput.focus();
+          emailInput.classList.add("ring-2", "ring-red-400");
+          setTimeout(() => emailInput.classList.remove("ring-2", "ring-red-400"), 2000);
+        }, 400);
+      }
       alert("Digite um e-mail válido no campo acima.");
       return;
     }
