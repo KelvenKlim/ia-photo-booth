@@ -194,8 +194,10 @@ async def edit_image(
         except OSError:
             pass
 
-from email.message import EmailMessage
-import smtplib
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import (
+    Mail, Attachment, FileContent, FileName, FileType, Disposition
+)
 
 # Endpoint para envio de imagem por e-mail
 @app.post("/api/send-email")
@@ -217,23 +219,28 @@ async def send_email(
     template_path = Path(__file__).parent / "templates" / "email_template.html"
     html_body = template_path.read_text(encoding="utf-8").replace("{{THEME}}", theme)
 
-    msg = EmailMessage()
-    msg['Subject'] = f'🎨 Sua foto foi processada - {theme}'
-    msg['From'] = os.getenv('SMTP_FROM', 'seuemail@dominio.com')
-    msg['To'] = to_email
-    msg.set_content('Sua foto gerada por IA está em anexo. Abra o arquivo anexado para visualizá-la!')
-    msg.add_alternative(html_body, subtype='html')
+    msg = Mail(
+        from_email=os.getenv("SENDGRID_FROM", "noreply@icbeutechzone.com"),
+        to_emails=to_email,
+        subject=f"🎨 Sua foto foi processada - {theme}",
+        plain_text_content="Sua foto gerada por IA está em anexo. Abra o arquivo anexado para visualizá-la!",
+        html_content=html_body,
+    )
 
-    img_data = base64.b64decode(image_base64)
-    msg.add_attachment(img_data, maintype='image', subtype='jpeg', filename=f'foto_icbeu_{theme.replace(" ", "_")}.jpg')
+    attachment = Attachment(
+        file_content=FileContent(image_base64),
+        file_name=FileName(f'foto_icbeu_{theme.replace(" ", "_")}.jpg'),
+        file_type=FileType("image/jpeg"),
+        disposition=Disposition("attachment"),
+    )
+    msg.attachment = attachment
 
     try:
-        with smtplib.SMTP_SSL(os.getenv('SMTP_SERVER', 'smtp.seuprovedor.com'), int(os.getenv('SMTP_PORT', '465'))) as smtp:
-            smtp.login(os.getenv('SMTP_FROM', 'seuemail@dominio.com'), os.getenv('SMTP_PASS', 'SENHA'))
-            smtp.send_message(msg)
-        logger.info(f"✅ E-mail enviado com sucesso para {to_email}")
+        sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY", ""))
+        response = sg.send(msg)
+        logger.info(f"✅ E-mail enviado via SendGrid para {to_email} — status {response.status_code}")
         return JSONResponse({"success": True})
     except Exception as e:
-        logger.error(f"Erro ao enviar e-mail: {e}")
+        logger.error(f"Erro ao enviar e-mail via SendGrid: {e}")
         raise HTTPException(status_code=500, detail=f"Erro ao enviar e-mail: {e}")
 

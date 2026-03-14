@@ -3,3 +3,4 @@ uvicorn[standard]==0.35.0
 python-multipart==0.0.20
 openai==1.107.0
 python-dotenv==1.1.0
+sendgrid==6.11.0
