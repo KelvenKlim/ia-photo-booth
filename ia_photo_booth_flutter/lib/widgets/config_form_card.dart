@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
-import '../models/api_models.dart';
 
 class ConfigFormCard extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController instructionsController;
-  final String selectedTheme;
-  final String selectedSize;
-  final ValueChanged<String?> onThemeChanged;
-  final ValueChanged<String?> onSizeChanged;
   final bool enabled;
 
   const ConfigFormCard({
     super.key,
     required this.emailController,
     required this.instructionsController,
-    required this.selectedTheme,
-    required this.selectedSize,
-    required this.onThemeChanged,
-    required this.onSizeChanged,
     required this.enabled,
   });
 
@@ -55,10 +46,10 @@ class ConfigFormCard extends StatelessWidget {
           children: [
             Row(
               children: const [
-                Icon(Icons.settings, color: Color(0xFF7C3AED), size: 20),
+                Icon(Icons.badge_outlined, color: Color(0xFF7C3AED), size: 20),
                 SizedBox(width: 8),
                 Text(
-                  'Configurações',
+                  'Dados do Aluno',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -91,7 +82,7 @@ class ConfigFormCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Theme
+            // Tema (somente leitura)
             Text(
               'Tema',
               style: TextStyle(
@@ -101,19 +92,28 @@ class ConfigFormCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            DropdownButtonFormField<String>(
-              initialValue: selectedTheme,
-              onChanged: enabled ? onThemeChanged : null,
-              dropdownColor: const Color(0xFF1E293B),
-              style: const TextStyle(color: Colors.white),
-              iconEnabledColor: const Color(0xFF94A3B8),
-              decoration: inputDecoration.copyWith(
-                prefixIcon: const Icon(Icons.palette_outlined, color: Color(0xFF94A3B8), size: 18),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E293B).withAlpha(128),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFF334155)),
               ),
-              items: kThemes
-                  .map((t) => DropdownMenuItem(value: t.value, child: Text(t.label)))
-                  .toList(),
+              child: Row(
+                children: [
+                  const Icon(Icons.palette_outlined, color: Color(0xFF475569), size: 18),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Hamilton',
+                    style: TextStyle(color: Color(0xFF64748B), fontSize: 15),
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.lock_outline, color: Color(0xFF475569), size: 16),
+                ],
+              ),
             ),
+
             const SizedBox(height: 16),
 
             // Extra instructions
@@ -135,31 +135,6 @@ class ConfigFormCard extends StatelessWidget {
                 hintText: 'Ex: adicione névoa, iluminação dramática...',
                 alignLabelWithHint: true,
               ),
-            ),
-            const SizedBox(height: 16),
-
-            // Size
-            Text(
-              'Tamanho da imagem',
-              style: TextStyle(
-                color: Colors.white.withAlpha(204),
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 6),
-            DropdownButtonFormField<String>(
-              initialValue: selectedSize,
-              onChanged: enabled ? onSizeChanged : null,
-              dropdownColor: const Color(0xFF1E293B),
-              style: const TextStyle(color: Colors.white),
-              iconEnabledColor: const Color(0xFF94A3B8),
-              decoration: inputDecoration.copyWith(
-                prefixIcon: const Icon(Icons.aspect_ratio, color: Color(0xFF94A3B8), size: 18),
-              ),
-              items: kSizes
-                  .map((s) => DropdownMenuItem(value: s.value, child: Text(s.label)))
-                  .toList(),
             ),
           ],
         ),

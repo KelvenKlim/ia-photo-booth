@@ -29,8 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _emailController.addListener(() => setState(() {}));
   }
 
-  String _selectedTheme = models.kThemes.first.value;
-  String _selectedSize = models.kSizes.first.value;
+  final String _selectedTheme = 'Hamilton';
+  final String _selectedSize = '1024x1024';
   File? _imageFile;
   models.AppState _appState = models.AppState.idle;
   String? _resultBase64;
@@ -137,14 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ConfigFormCard(
                     emailController: _emailController,
                     instructionsController: _instructionsController,
-                    selectedTheme: _selectedTheme,
-                    selectedSize: _selectedSize,
-                    onThemeChanged: (v) {
-                      if (v != null) setState(() => _selectedTheme = v);
-                    },
-                    onSizeChanged: (v) {
-                      if (v != null) setState(() => _selectedSize = v);
-                    },
                     enabled: !_isProcessing,
                   ),
                   const SizedBox(height: 16),
