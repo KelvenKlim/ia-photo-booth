@@ -128,11 +128,12 @@ async def edit_image(
     if not content:
         raise HTTPException(status_code=400, detail="Arquivo de imagem vazio.")
 
-    allowed = {"image/png", "image/jpeg", "image/webp"}
-    if image.content_type not in allowed:
+    allowed = {"image/png", "image/jpeg", "image/jpg", "image/webp", "application/octet-stream"}
+    content_type = (image.content_type or "").lower()
+    if content_type and content_type not in allowed:
         raise HTTPException(
             status_code=400,
-            detail="Formato inválido. Use PNG, JPG/JPEG ou WEBP.",
+            detail=f"Formato inválido ({content_type}). Use PNG, JPG/JPEG ou WEBP.",
         )
 
     prompt = build_prompt(theme=theme, extra_instructions=extra_instructions)
