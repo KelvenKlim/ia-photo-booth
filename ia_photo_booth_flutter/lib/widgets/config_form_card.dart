@@ -4,12 +4,16 @@ class ConfigFormCard extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController instructionsController;
   final bool enabled;
+  final bool emailError;
+  final FocusNode? emailFocusNode;
 
   const ConfigFormCard({
     super.key,
     required this.emailController,
     required this.instructionsController,
     required this.enabled,
+    this.emailError = false,
+    this.emailFocusNode,
   });
 
   @override
@@ -70,16 +74,45 @@ class ConfigFormCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            TextFormField(
+            TextField(
               controller: emailController,
+              focusNode: emailFocusNode,
               enabled: enabled,
               keyboardType: TextInputType.emailAddress,
               style: const TextStyle(color: Colors.white),
               decoration: inputDecoration.copyWith(
                 hintText: 'seu@email.com',
                 prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF94A3B8), size: 18),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: emailError ? const Color(0xFFef4444) : const Color(0xFF334155),
+                    width: emailError ? 2 : 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: emailError ? const Color(0xFFef4444) : const Color(0xFF7C3AED),
+                    width: 2,
+                  ),
+                ),
               ),
             ),
+            if (emailError) ...[
+              const SizedBox(height: 6),
+              const Row(
+                children: [
+                  SizedBox(width: 4),
+                  Icon(Icons.error_outline, color: Color(0xFFef4444), size: 14),
+                  SizedBox(width: 4),
+                  Text(
+                    'E-mail obrigatório',
+                    style: TextStyle(color: Color(0xFFef4444), fontSize: 12),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 16),
 
             // Tema (somente leitura)

@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // rebuild on every keystroke so _emailError recalculates automatically
     _emailController.addListener(() => setState(() {}));
   }
 
@@ -36,11 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _resultBase64;
   String? _resultMimeType;
   String? _promptUsed;
+  bool _emailErrorTriggered = false;
+
+  // true only if user tried to submit AND field still lacks @
+  bool get _emailError =>
+      _emailErrorTriggered && !_emailController.text.contains('@');
 
   bool get _canProcess =>
-      _imageFile != null &&
-      _emailController.text.contains('@') &&
-      _appState != models.AppState.processing;
+      _imageFile != null && _appState != models.AppState.processing;
 
   bool get _isProcessing => _appState == models.AppState.processing;
 
@@ -52,6 +56,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _handleProcess() async {
     if (!_canProcess || _imageFile == null) return;
 
+    if (!_emailController.text.contains('@')) {
+      setState(() => _emailErrorTriggered = true);
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+      Future.delayed(const Duration(milliseconds: 450), () {
+        _emailFocusNode.requestFocus();
+      });
+      return;
+    }
     setState(() => _appState = models.AppState.processing);
 
     try {
@@ -96,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _resultBase64 = null;
       _resultMimeType = null;
       _promptUsed = null;
+      _emailErrorTriggered = false;
     });
     _emailController.clear();
     _instructionsController.clear();
@@ -138,6 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     emailController: _emailController,
                     instructionsController: _instructionsController,
                     enabled: !_isProcessing,
+                    emailError: _emailError,
+                    emailFocusNode: _emailFocusNode,
                   ),
                   const SizedBox(height: 16),
                   ImageUploadCard(
@@ -161,6 +180,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     onProcess: _handleProcess,
                     onClear: _handleClear,
                   ),
+                  if (_emailError && _imageFile != null) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: const [
+                        Icon(Icons.info_outline, color: Color(0xFFf59e0b), size: 15),
+                        SizedBox(width: 6),
+                        Text(
+                          'Preencha o e-mail para continuar',
+                          style: TextStyle(color: Color(0xFFf59e0b), fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   if (_isProcessing) ...[
                     const ProcessingOverlay(),
