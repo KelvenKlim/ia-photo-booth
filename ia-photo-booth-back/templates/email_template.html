@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Arial', 'Helvetica', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #7B1FA2, #1E88E5);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .header h1 { color: white; margin: 0; font-size: 28px; font-weight: bold; }
+    .header p { color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px; }
+    .content { padding: 40px 30px; }
+    .content h2 { color: #7B1FA2; margin-top: 0; font-size: 24px; }
+    .theme-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #7B1FA2, #AB47BC);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .info-box {
+      background: #f8f9fa;
+      border-left: 4px solid #7B1FA2;
+      padding: 15px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .footer {
+      background: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+    }
+    .footer p { margin: 5px 0; color: #666; font-size: 14px; }
+    @media only screen and (max-width: 600px) {
+      .container { margin: 0; border-radius: 0; }
+      .content, .header, .footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://storage.googleapis.com/techzone-36979.firebasestorage.app/assets/logo-icbeu.png"
+           alt="ICBEU" style="max-width:120px;margin-bottom:15px;">
+      <h1>🎨 Sua Foto está Pronta!</h1>
+      <p>Processada com Inteligência Artificial</p>
+    </div>
+    <div class="content">
+      <h2>Olá! 👋</h2>
+      <p>Sua foto foi processada com sucesso usando o tema:</p>
+      <span class="theme-badge">✨ {{THEME}}</span>
+
+      <p style="margin-top:24px;">Sua foto está anexada a este e-mail. Salve e compartilhe como quiser!</p>
+
+      <div class="info-box">
+        <p style="margin: 0;">
+          <strong>💡 Dica:</strong> Abra o anexo para ver sua foto em alta qualidade!
+        </p>
+      </div>
+
+      <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;" />
+
+      <p><strong>🎉 Gostou do resultado?</strong></p>
+      <p>Você pode criar mais fotos incríveis no <strong>ICBEU IA Photo Zone</strong>!</p>
+      <p>VENHA PARA O ICBEU MANAUS.</p>
+    </div>
+    <div class="footer">
+      <p><strong>ICBEU - IA Photo Zone</strong></p>
+      <p>Instituto Cultural Brasil Estados Unidos</p>
+      <p>SEMPRE INOVANDO</p>
+      <p style="font-size: 12px; color: #999; margin-top: 20px;">
+        Este é um email automático. Por favor, não responda.<br>
+        Se você não solicitou este email, por favor ignore esta mensagem.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
