@@ -5,6 +5,7 @@ import { ImageUploadCard } from "@/components/ImageUploadCard";
 import { ActionButtons } from "@/components/ActionButtons";
 import { ResultCard } from "@/components/ResultCard";
 import { ShareButtons } from "@/components/ShareButtons";
+import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { editImage } from "@/services/api";
 import type { AppState } from "@/types/api";
 import { toast } from "sonner";
@@ -108,6 +109,9 @@ export default function Index() {
           onProcess={handleProcess}
           onClear={handleClear}
         />
+
+        {/* Processing overlay */}
+        {appState === "processing" && <ProcessingOverlay />}
 
         {/* Result section */}
         <div ref={resultRef}>

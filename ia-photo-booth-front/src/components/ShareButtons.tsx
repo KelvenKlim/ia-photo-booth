@@ -131,19 +131,14 @@ export function ShareButtons({ resultUri, onRegenerate, email }: ShareButtonsPro
 
   return (
     <section className="space-y-3 animate-fade-up" style={{ animationDelay: "0.15s" }}>
-      <Button variant="whatsapp" size="xl" className="w-full" onClick={handleShare}>
-        <Share2 className="h-5 w-5" />
-        Compartilhar
+      <Button variant="whatsapp" size="xl" className="w-full" onClick={handleEmail} disabled={sending}>
+        <Mail className="h-5 w-5" />
+        {sending ? "Enviando..." : "Enviar por E-mail"}
       </Button>
 
       <Button variant="outline-card" size="lg" className="w-full" onClick={handleDownload}>
         <Download className="h-4 w-4" />
         Baixar Imagem
-      </Button>
-
-      <Button variant="outline-card" size="lg" className="w-full" onClick={handleEmail} disabled={sending}>
-        <Mail className="h-4 w-4" />
-        {sending ? "Enviando..." : "Enviar por E-mail"}
       </Button>
 
       <Button variant="ghost" size="default" className="w-full text-primary" onClick={onRegenerate}>
