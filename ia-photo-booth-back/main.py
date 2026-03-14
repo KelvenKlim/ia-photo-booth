@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
@@ -200,9 +200,11 @@ import smtplib
 # Endpoint para envio de imagem por e-mail
 @app.post("/api/send-email")
 async def send_email(
-    to_email: str = Form(...),
-    image_base64: str = Form(...),
+    request: Request,
 ):
+    body = await request.json()
+    to_email = body.get("to_email", "")
+    image_base64 = body.get("image_base64", "")
     print("Recebido pedido de envio de e-mail para:", to_email)
     msg = EmailMessage()
     msg['Subject'] = 'Sua foto já está pronta! 📸'

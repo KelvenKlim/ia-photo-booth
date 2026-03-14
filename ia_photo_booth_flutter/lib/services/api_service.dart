@@ -42,12 +42,14 @@ class ApiService {
     required String imageBase64,
   }) async {
     final uri = Uri.parse('$kApiBaseUrl/api/send-email');
-    final request = http.MultipartRequest('POST', uri);
-    request.fields['to_email'] = toEmail;
-    request.fields['image_base64'] = imageBase64;
-
-    final streamed = await request.send();
-    final response = await http.Response.fromStream(streamed);
+    final response = await http.post(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'to_email': toEmail,
+        'image_base64': imageBase64,
+      }),
+    );
 
     if (response.statusCode != 200) {
       throw Exception('Erro ao enviar e-mail: ${response.reasonPhrase}');
