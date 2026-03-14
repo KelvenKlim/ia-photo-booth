@@ -28,6 +28,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Check if mock mode is enabled
+MOCK_MODE = os.getenv("MOCK_MODE", "false").lower() == "true"
+if MOCK_MODE:
+    logger.warning("⚠️ MOCK MODE ENABLED - Images will be generated locally without using OpenAI API")
+
 
 def build_prompt(theme: str, extra_instructions: Optional[str] = None) -> str:
     base = f"""
@@ -63,6 +68,44 @@ SCENE GUIDANCE:
     return base
 
 
+def generate_mock_image(theme: str) -> str:
+    """Generate a simple mock image in base64 (1x1 pixel PNG for testing)"""
+    try:
+        from PIL import Image, ImageDraw
+        
+        # Create a simple gradient image to represent the edited photo
+        img = Image.new('RGB', (512, 512), color='white')
+        draw = ImageDraw.Draw(img)
+        
+        # Add some visual indication based on theme
+        theme_colors = {
+            "Hamilton": (29, 53, 87),  # Dark blue
+            "Colonial American": (160, 120, 80),  # Brown
+            "Historical Portrait": (100, 100, 100),  # Gray
+            "Vintage Studio": (139, 69, 19),  # Saddle brown
+        }
+        
+        color = theme_colors.get(theme, (70, 130, 180))  # Steel blue default
+        
+        # Draw a simple frame
+        draw.rectangle([50, 50, 462, 462], outline=color, width=3)
+        draw.text((256, 256), f"Mock: {theme}", fill=color, anchor="mm")
+        
+        # Convert to base64
+        import io
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        b64_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        
+        logger.info("✓ Mock image generated successfully")
+        return b64_image
+    except ImportError:
+        # If PIL not available, return a minimal valid PNG base64
+        logger.warning("PIL not available, returning minimal PNG")
+        # This is a 1x1 white pixel PNG in base64
+        return "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg=="
+
+
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
@@ -81,10 +124,6 @@ async def edit_image(
     logger.info(f"Image: {image.filename}, content_type: {image.content_type}")
     logger.info(f"Extra instructions: {extra_instructions}")
     
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=500, detail="OPENAI_API_KEY não configurada no backend.")
-
     content = await image.read()
     if not content:
         raise HTTPException(status_code=400, detail="Arquivo de imagem vazio.")
@@ -97,6 +136,23 @@ async def edit_image(
         )
 
     prompt = build_prompt(theme=theme, extra_instructions=extra_instructions)
+
+    # MOCK MODE - for testing without consuming API tokens
+    if MOCK_MODE:
+        logger.info("🎭 Using MOCK mode - generating test image")
+        output_b64 = generate_mock_image(theme)
+        return JSONResponse(
+            {
+                "prompt_used": prompt,
+                "image_base64": output_b64,
+                "mime_type": "image/png",
+            }
+        )
+
+    # REAL MODE - use OpenAI API
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="OPENAI_API_KEY não configurada no backend.")
 
     client = OpenAI(api_key=api_key)
 
