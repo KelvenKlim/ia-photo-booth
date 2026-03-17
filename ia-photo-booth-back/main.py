@@ -36,64 +36,54 @@ if MOCK_MODE:
 
 def build_prompt(theme: str, extra_instructions: Optional[str] = None) -> str:
     base = f"""
-Use the provided photo as the primary facial identity reference.
-
-Recreate the SAME people from the reference photo in a {theme} scene.
-
+Use the uploaded image as the PRIMARY IDENTITY REFERENCE.
 
 TASK:
-Transform the real person from the source image into a photorealistic {theme} cinematic portrait.
+Transform the real subject from the source image into a photorealistic cinematic portrait in the theme: {theme}.
 
 IDENTITY PRESERVATION — HIGHEST PRIORITY:
 - preserve the exact identity of the subject
 - keep the same facial structure, eyes, nose, mouth, jawline, beard, mustache, hairline, skin tone, and natural proportions
-- do not replace the person with a lookalike
-- do not beautify, de-age, idealize, or change ethnicity
+- do not replace the subject with a lookalike
+- do not beautify, de-age, idealize, or significantly alter the subject
 - the final result must clearly look like the same real person from the input image
 
 COMPOSITION:
-- recompose the image as a cinematic medium shot or half-body portrait
-- do not keep the original selfie framing
-- show more of the clothing and body posture
-- preserve the spirit of the original pose when possible, but adapt it naturally to fit the historical scene
-- subject should be the main focus, centered and clearly visible
+- recompose the image beyond the original selfie framing
+- use a medium or medium-wide cinematic portrait
+- show the upper body and enough surrounding space to establish the setting
+- keep the face clearly recognizable, but allow the environment to be a meaningful part of the composition
 
-SCENE AND ENVIRONMENT:
-- create a rich, believable, visually detailed historical environment
-- include a fully developed background, not a plain or empty backdrop
-- use period-appropriate interior elements, such as wooden walls, tables, candles, lanterns, papers, colonial decor, and soft atmospheric depth
-- add subtle background activity when appropriate, with secondary figures blurred or less prominent
-- create a strong sense of place and historical storytelling
+ENVIRONMENT:
+- create a rich, developed, visually readable historical setting
+- the environment must be clearly visible and must not look generic
+- do not use a vague blurred backdrop as the main solution
+- include recognizable period elements appropriate to the requested scene
+- each variation must produce a distinct environment, not just small changes in color or lighting
+- the background should support storytelling and clearly communicate the chosen setting
 
-WARDROBE:
-- dress the subject in historically accurate clothing matching the theme
-- layered period garments, realistic fabrics, detailed buttons, collars, waistcoat, coat, and era-appropriate styling
-
-LIGHTING AND STYLE:
+STYLE:
 - photorealistic
 - cinematic
 - realistic skin texture
-- dramatic but natural lighting
-- warm historical atmosphere
 - high detail
-- depth of field
-- premium editorial quality
+- dramatic but natural lighting
+- editorial quality
+- immersive historical realism
 
 NEGATIVE CONSTRAINTS:
 - no cartoon
 - no anime
-- no illustration
 - no painting
-- no modern clothes
+- no generic studio backdrop
 - no empty background
-- no flat studio backdrop unless explicitly requested
+- no modern clothing
 - no text
 - no watermark
 - no logo
-- no frame
 - no face distortion
-- no exaggerated facial changes
 - no duplicate people
+
 """.strip()
 
     if extra_instructions:
