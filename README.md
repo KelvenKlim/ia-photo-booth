@@ -1,6 +1,6 @@
 # IA Photo Booth
 
-Uma aplicação completa de edição de fotos usando inteligência artificial para transformar imagens em versões históricas ou temáticas. O projeto consiste em um backend robusto (FastAPI) e um frontend moderno (React + TypeScript).
+Uma aplicação completa de edição de fotos usando inteligência artificial para transformar imagens em versões históricas ou temáticas. O projeto consiste em um backend robusto (FastAPI) e um aplicativo mobile (Flutter).
 
 ## 🎯 O que faz
 
@@ -9,7 +9,7 @@ Uma aplicação completa de edição de fotos usando inteligência artificial pa
 - ✅ Permite customizar tema e instruções extras
 - ✅ Mostra a imagem original e o resultado final lado a lado
 - ✅ Retorna a imagem em base64 para download imediato
-- ✅ Interface responsiva e moderna (mobile-first)
+- ✅ Interface nativa mobile (Android e iOS)
 
 ## 📊 Stack Tecnológico
 
@@ -19,13 +19,11 @@ Uma aplicação completa de edição de fotos usando inteligência artificial pa
 - **IA:** OpenAI Images API (`images.edit`)
 - **Requisitos:** Python 3.8+
 
-### Frontend
-- **Framework:** React 18+
-- **Linguagem:** TypeScript
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS
-- **UI Components:** shadcn/ui
-- **Requisitos:** Node.js 18+ / Bun
+### Mobile
+- **Framework:** Flutter
+- **Linguagem:** Dart
+- **Requisitos:** Flutter SDK ^3.11.1
+- **Plataformas:** Android e iOS
 
 ## 📁 Estrutura do Projeto
 
@@ -33,19 +31,22 @@ Uma aplicação completa de edição de fotos usando inteligência artificial pa
 ia-photo-booth/
 ├── ia-photo-booth-back/          # Backend (FastAPI)
 │   ├── main.py                   # Aplicação principal
-│   ├── requirements.txt           # Dependências Python
+│   ├── requirements.txt          # Dependências Python
 │   └── README.md
-├── ia-photo-booth-front/         # Frontend (React + TypeScript)
-│   ├── src/
-│   │   ├── components/           # Componentes React
-│   │   ├── pages/                # Páginas
+├── ia_photo_booth_flutter/       # App Mobile (Flutter)
+│   ├── lib/
+│   │   ├── config.dart           # Configuração da API
+│   │   ├── main.dart             # Entrypoint
+│   │   ├── models/               # Modelos de dados
+│   │   ├── screens/              # Telas do app
 │   │   ├── services/             # Serviços API
-│   │   ├── types/                # Types TypeScript
-│   │   └── App.tsx
-│   ├── package.json
-│   ├── vite.config.ts
-│   ├── tailwind.config.ts
+│   │   └── widgets/              # Componentes reutilizáveis
+│   ├── android/                  # Projeto Android
+│   ├── ios/                      # Projeto iOS
+│   ├── pubspec.yaml              # Dependências Flutter
 │   └── README.md
+├── render.yaml                   # Configuração de deploy (Render)
+├── iniciar-emulador.bat          # Script para iniciar emulador Android (Windows)
 └── README.md                     # Este arquivo
 ```
 
@@ -54,7 +55,7 @@ ia-photo-booth/
 ### Pré-requisitos
 
 - **Python 3.8+** (para o backend)
-- **Node.js 18+** ou **Bun** (para o frontend)
+- **Flutter SDK ^3.11.1** (para o app mobile)
 - Chave de API da OpenAI (para usar a IA)
 
 ### 1. Backend (FastAPI)
@@ -89,33 +90,28 @@ uvicorn main:app --reload --port 8000
 - `POST /upload` - Envia imagem e configurações para edição
 - `GET /docs` - Documentação interativa (Swagger UI)
 
-### 2. Frontend (React)
+### 2. App Mobile (Flutter)
 
 ```bash
-# Navegue para a pasta do frontend
-cd ia-photo-booth-front
+# Navegue para a pasta do app mobile
+cd ia_photo_booth_flutter
 
 # Instale as dependências
-# Com npm:
-npm install
-# Ou com Bun:
-bun install
+flutter pub get
 
-# Inicie o servidor de desenvolvimento
-npm run dev
-# Ou:
-bun run dev
+# Inicie um emulador ou conecte um dispositivo físico
+# No Windows, você pode usar o script:
+# iniciar-emulador.bat
 
-# O frontend estará disponível em http://localhost:5173
+# Execute o app
+flutter run
 ```
 
-**Scripts disponíveis:**
-- `npm run dev` - Inicia o servidor de desenvolvimento
-- `npm run build` - Cria build para produção
-- `npm run preview` - Visualiza a build em produção
-- `npm run lint` - Executa o ESLint
-- `npm run test` - Executa testes (Vitest)
-- `npm run test:watch` - Executa testes em modo watch
+**Comandos úteis:**
+- `flutter run` - Executa o app em modo debug
+- `flutter build apk` - Gera APK para Android
+- `flutter build ios` - Gera build para iOS
+- `flutter test` - Executa os testes
 
 ## 🔧 Configuração
 
@@ -128,12 +124,13 @@ OPENAI_API_KEY=sk-sua-chave-aqui
 OPENAI_MODEL=gpt-image-1
 ```
 
-### Frontend - Configuração da API
+### Mobile - Configuração da API
 
-Atualize a URL da API em `src/services/api.ts` se necessário:
+Atualize a URL da API em `ia_photo_booth_flutter/lib/config.dart` se necessário:
 
-```typescript
-const API_BASE_URL = 'http://localhost:8000';
+```dart
+const String apiBaseUrl = 'http://10.0.2.2:8000'; // Android emulator
+// const String apiBaseUrl = 'http://localhost:8000'; // iOS simulator
 ```
 
 ## 📦 Dependências Principais
@@ -148,29 +145,33 @@ const API_BASE_URL = 'http://localhost:8000';
 | python-dotenv | 1.1.0 | Variáveis de Ambiente |
 | python-multipart | 0.0.20 | Upload de Arquivos |
 
-### Frontend
+### Mobile (Flutter)
 
-- **React**: Interface de usuário
-- **TypeScript**: Type safety
-- **Vite**: Build tool rápido
-- **Tailwind CSS**: Utility-first CSS
-- **shadcn/ui**: Componentes UI customizáveis
-- **Vitest**: Testes unitários
-- **ESLint**: Linting
+| Pacote | Uso |
+|--------|-----|
+| http | Requisições HTTP |
+| http_parser | Parsing de respostas HTTP |
+| image_picker | Seleção de imagens da galeria/câmera |
+| share_plus | Compartilhamento de imagens |
+| path_provider | Acesso ao sistema de arquivos |
+| permission_handler | Gerenciamento de permissões |
 
 ## 🎨 Features
 
-### Componentes Frontend
+### Telas e Widgets (Flutter)
+- `SplashScreen` - Tela de carregamento inicial
+- `HomeScreen` - Tela principal do app
 - `ActionButtons` - Botões de ação (editar, reset, etc)
-- `AppHeader` - Cabeçalho da aplicação
+- `AppHeader` - Cabeçalho do app
 - `ConfigFormCard` - Formulário de configuração
-- `ImageUploadCard` - Upload de imagens
-- `ResultCard` - Exibição do resultado
+- `ImageUploadCard` - Seleção e upload de imagens
+- `ResultCard` - Exibição do resultado da IA
 - `ShareButtons` - Botões de compartilhamento
-- Biblioteca completa de componentes UI (shadcn/ui)
+- `ProcessingOverlay` - Overlay de processamento
+- `FullscreenImageViewer` - Visualizador de imagem em tela cheia
 
 ### API Backend
-- Suporte a CORS para requisições do frontend
+- Suporte a CORS para requisições do app mobile
 - Validação de imagens
 - Integração com OpenAI Images API
 - Tratamento de erros robusto
@@ -178,16 +179,13 @@ const API_BASE_URL = 'http://localhost:8000';
 
 ## 🧪 Testes
 
-### Frontend
+### Mobile (Flutter)
 
 ```bash
-cd ia-photo-booth-front
+cd ia_photo_booth_flutter
 
-# Executar testes uma vez
-npm run test
-
-# Executar testes em modo watch
-npm run test:watch
+# Executar testes
+flutter test
 ```
 
 ## 🐛 Troubleshooting
@@ -198,10 +196,9 @@ Se receber erro de conexão ao fazer `pip install`, verifique:
 - Se precisa de proxy (corporate networks)
 - Tente: `pip install --index-url https://pypi.org/simple/ -r requirements.txt`
 
-### Erro CORS no frontend
-Certifique-se que:
-- O backend está rodando em `http://localhost:8000`
-- O backend tem CORS configurado para `http://localhost:5173`
+### App não conecta ao backend (Android Emulator)
+No emulador Android, `localhost` aponta para o próprio dispositivo. Use:
+- `http://10.0.2.2:8000` para acessar o host da máquina no emulador Android
 
 ### Chave da OpenAI não reconhecida
 - Verifique se o arquivo `.env` está no diretório correto
@@ -211,9 +208,9 @@ Certifique-se que:
 ## 📚 Documentação Adicional
 
 - [Backend - README](./ia-photo-booth-back/README.md)
-- [Frontend - README](./ia-photo-booth-front/README.md)
+- [Mobile - README](./ia_photo_booth_flutter/README.md)
 - [FastAPI Docs](https://fastapi.tiangolo.com/)
-- [React Docs](https://react.dev/)
+- [Flutter Docs](https://docs.flutter.dev/)
 - [OpenAI API Docs](https://platform.openai.com/docs/api-reference/images)
 
 ## 👨‍💻 Desenvolvimento
@@ -228,7 +225,7 @@ Certifique-se que:
 ### Code Style
 
 - **Backend**: Siga as convenções Python (PEP 8)
-- **Frontend**: ESLint será executado no commit
+- **Mobile**: Siga as convenções Dart/Flutter (`flutter analyze`)
 
 ## 📝 Licença
 
@@ -240,4 +237,4 @@ Se encontrar problemas ou tiver sugestões, abra uma issue no repositório.
 
 ---
 
-**Última atualização:** Março 2026
+**Última atualização:** Maio 2026
